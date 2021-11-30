@@ -179,6 +179,8 @@ restart = do
     tictactoe emptyBoard 'x'
   else if playAgain == "N" || playAgain == "n" then
     return ()
+  else if playAgain == "exit" || playAgain == "EXIT" then
+    return ()
   else do
     putStrLn "Invalid input. Please enter 'Y' or 'N'"
     restart
