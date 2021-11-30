@@ -77,13 +77,35 @@ checkForWin b m = vert || horiz || diagUpperLeft || diagUpperRight
 fullBoard :: Board -> Bool
 fullBoard = not . foldr1 (||) . map (any(==' '))
 
-
--- print board with newly placed piece
+-- return updated board if move is valid
+updatedBoard :: Board -> Move -> Char -> (Board, Bool)
+updatedBoard b m player
+    -- position doesn't exist
+    | x < 0 || y < 0 || x >= w || y >= h  = (b, False) -- Out of bounds
+    -- position not empty
+    | getItem x y b /= ' '                  = (b, False) 
+    | otherwise                           = (placeItem x y player b, True)
+  where
+    x = fst m  -- x coordinate for the move
+    y = snd m  -- y coordinate for the move
+    w = length $ head b  -- width of board
+    h = length b -- height of board
 
 -- alternate turns
 turn :: Char -> Char
 turn current = if current == 'x' then 'o' else 'x'
 
--- prevent replays
-
+-- if the user chooses to play again, restart the game 
+restart :: IO()
+restart = do
+  putStrLn "Would you like to play again? (Y/N)"
+  playAgain <- getLine
+  if playAgain == "Y" || playAgain == "y" then do
+    putStrLn $ take 20 $ repeat '\n'
+    tictactoe emptyBoard 'x'
+  else if playAgain == "N" || playAgain == "n" then
+    return ()
+  else do
+    putStrLn "Invalid input. Please enter 'Y' or 'N'"
+    restart
 
