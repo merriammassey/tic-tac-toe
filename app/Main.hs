@@ -1,9 +1,39 @@
--- module Main where
+main :: IO ()
+main = do
+putStrLn $ take 10 $ repeat '\n'
+  putStrLn "\nWelcome to Tic Tac Toe\n"
 
--- import Lib
-
--- main :: IO ()
--- main = someFunc
+tictactoe :: Board -> Char -> IO()
+tictactoe board playerChar = do
+    putStrLn $ "\n" ++ (makeBoard board) ++ "\n"
+    putStrLn $ "Player " ++ [playerChar] ++ ", please enter your move: "
+    line <- getLine
+    putStrLn $ take 20 $ repeat '\n'
+    if "exit" == line then
+      return ()
+    else do
+      let move = makeMove line
+      if snd move then do
+        let newBoardTuple = updatedBoard board (fst move) playerChar
+        if snd newBoardTuple then do
+          let newBoard = fst newBoardTuple
+          if (checkForWin newBoard (fst move)) then do
+            putStrLn $ makeBoard newBoard
+            putStrLn $ "Player " ++ [playerChar] ++ " is the winner!"
+            restart
+          else if fullBoard newBoard then do
+            putStrLn $ makeBoard newBoard
+            putStrLn $ "It's a tie!"
+            restart
+          else
+            tictactoe newBoard (turn playerChar) 
+        else do
+          putStrLn "Invalid move!"
+          putStrLn "Please try again."
+          tictactoe board playerChar 
+      else do
+        putStrLn "Invalid move.\nPlease try again."
+        tictactoe board playerChar 
 
 -- the board = a list of strings
 type Board = [[Char]]
@@ -13,9 +43,6 @@ type Move = (Int, Int)
 
 -- the board, full of empty spaces to begin
 emptyBoard = ["   ", "   ", "   "]
-
-
--- Helper Functions
 
 -- make a board with labeled rows (numbers) and columns (letters)
 makeBoard :: Board -> String
@@ -32,14 +59,13 @@ makeBoard board =
     -- add 123 to rows
     numbers s = [(show n) ++ "  " ++ x | n <- [0..(length s)-1], x <- [s!!n]]
 
-
 -- turns user input into a Move, checking to see if it's a valid move
 makeMove :: String -> (Move, Bool)
 makeMove str
     -- if the user enters more than 2 characters, it's an invalid move
-    | length str /= 2                             = invalidMove -- Other than 2 chars
-    | (elem l ['A'..'Z']) && (elem n ['0'..'9'])  = ( ((ord l)-65, (ord n)-48), True )
-    | otherwise                                   = invalidMove -- Invalid Move
+    | length str /= 2 = invalidMove -- Other than 2 chars
+    | (elem l ['A'..'Z']) && (elem n ['0'..'9']) = ( ((ord l)-65, (ord n)-48), True )
+    | otherwise = invalidMove -- Invalid Move
   where
     l = str!!0 -- Char letter
     n = str!!1 -- Char number
@@ -65,13 +91,24 @@ strFromArr = map (\x -> [x])
 checkForWin :: Board -> Move -> Bool
 checkForWin b m = vert || horiz || diagUpperLeft || diagUpperRight
   where
-    dUL             = diagonalFromLeft b -- The upper left daigonal array
-    dUR             = diagonalFromRight b -- The upper right diaganal array
+    dUL = diagonalFromLeft b -- The upper left daigonal array
+    dUR = diagonalFromRight b -- The upper right diaganal array
     -- check the row, column, and diagonals from last move to see if they all contain same player
-    vert            = checkForSame $ b !! (snd m)
-    horiz           = checkForSame $ map (!! (fst m)) b
-    diagUpperLeft   = (not $ all (== ' ') dUL) && (checkForSame dUL)
-    diagUpperRight  = (not $ all (== ' ') dUR) && (checkForSame dUR)
+    vert = checkForSame $ b !! (snd m)
+    horiz = checkForSame $ map (!! (fst m)) b
+    diagUpperLeft = (not $ all (== ' ') dUL) && (checkForSame dUL)
+    diagUpperRight = (not $ all (== ' ') dUR) && (checkForSame dUR)
+
+-- checks to see if all items in list are the same (win)
+checkForSame :: Eq a => [a] -> Bool
+checkForSame (x:xs) = all (==x) xs
+-- checks right to left diagonal
+diagonalFromRight :: [[a]] -> [a]
+diagonalFromRight xs = [(xs!!n)!!n | n <- [0..(length xs) -1]]
+-- checks left to right diagonal
+diagonalFromLeft :: [[a]] -> [a]
+diagonalFromLeft xs = [(xs!!n)!!(len - n -1) | n <- [0..len-1]]
+  where len = length xs
 
 -- check to see if board is full
 fullBoard :: Board -> Bool
@@ -81,10 +118,10 @@ fullBoard = not . foldr1 (||) . map (any(==' '))
 updatedBoard :: Board -> Move -> Char -> (Board, Bool)
 updatedBoard b m player
     -- position doesn't exist
-    | x < 0 || y < 0 || x >= w || y >= h  = (b, False) -- Out of bounds
+    | x < 0 || y < 0 || x >= w || y >= h = (b, False) -- Out of bounds
     -- position not empty
-    | getItem x y b /= ' '                  = (b, False) 
-    | otherwise                           = (placeItem x y player b, True)
+    | getItem x y b /= ' ' = (b, False) 
+    | otherwise = (placeItem x y player b, True)
   where
     x = fst m  -- x coordinate for the move
     y = snd m  -- y coordinate for the move
