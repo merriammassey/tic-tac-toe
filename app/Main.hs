@@ -35,7 +35,21 @@ makeBoard board =
 
 -- check if position is open 
 
--- place piece in position chosen
+-- place item, return new board
+-- helper function that inserts an item into an array
+put :: Int -> a -> [a] -> [a]
+put pos newVal list = take pos list ++ newVal : drop (pos+1) list
+-- places x or o on the board, return updated board
+placeItem :: Int -> Int -> a -> [[a]] -> [[a]]
+placeItem x y newVal mat = put y (put x newVal (mat!!y)) mat
+
+-- identifies item occupying a position 
+getItem :: Int -> Int -> [[a]] -> a
+getItem x y mat = (mat!!y)!!x
+
+-- return multiple single-char strings from array of chars
+strFromArr :: String -> [String]
+strFromArr = map (\x -> [x])
 
 -- check if player won
     -- if not, continue game
