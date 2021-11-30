@@ -1,7 +1,10 @@
+import Data.List
+import Data.Char
+
 main :: IO ()
 main = do
-putStrLn $ take 10 $ repeat '\n'
-  putStrLn "\nWelcome to Tic Tac Toe\n"
+  putStrLn $ take 10 $ repeat '\n'
+  putStrLn "\n x o x o   Welcome to Tic Tac Toe   x o x o\n"
   putStrLn "Where columns are represented by letters,"
   putStrLn "and rows are represented by numbers.\n"
   putStrLn "  A   B   C  "

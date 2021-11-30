@@ -2,11 +2,9 @@
 
 ## Description
 
-To begin learning functional programming, I created this tic-tac-toe game using Haskell.
+Haskell is a purely functional programming language in which programs are written in declarative code as a single expression that is executed when the expression is evaluated. With lazy expression, the expression is not evaluated until it is used, which can result in perfomance gains.
 
-In Haskell, the program is written in declarative code. The program is a single expression that is executed when the expression is evaluated. With lazy expression, the expression is not evaluated until it is used, which can result in perfomance gains.
-
-To learn more about Haskell in 100 seconds, watch [this video](https://www.youtube.com/watch?v=Qa8IfEeBJqk).
+To learn more about Haskell, watch [this short video](https://www.youtube.com/watch?v=Qa8IfEeBJqk).
 
 ## Table of Contents
 
@@ -44,6 +42,9 @@ main
 ```
 
 ## Demo
+
+[![image](https://user-images.githubusercontent.com/77468612/144076258-29c1363e-cde2-4596-8296-07ef01fb9b70.png)
+](https://youtu.be/MUb9a-7yUJY "Demo video")
 
 ## License
 
