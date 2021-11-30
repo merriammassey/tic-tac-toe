@@ -2,35 +2,71 @@ main :: IO ()
 main = do
 putStrLn $ take 10 $ repeat '\n'
   putStrLn "\nWelcome to Tic Tac Toe\n"
+  putStrLn "Where columns are represented by letters,"
+  putStrLn "and rows are represented by numbers.\n"
+  putStrLn "  A   B   C  "
+  putStrLn "0   |   |   "
+  putStrLn "  --------- "
+  putStrLn "1   | X |   "
+  putStrLn "  --------- "
+  putStrLn "2   |   |   \n"
+  putStrLn "To make a move, type the letter and number"
+  putStrLn "that represent the cell you wish to move to.\n"
+  putStrLn "For example, B1 will place your mark" 
+  putStrLn "in the middle cell as shown above.\n"
+  putStrLn "Type 'exit' at any time to quit.\n"
+  putStrLn "When you are ready to begin, press 'Enter'.\n"
+
+  -- get user input to determine if the user wants to exit
+  input <- getLine
+  if input == "exit" then
+    return ()
+    -- otherwise, begin with player x
+    else do
+        putStrLn $ take 20 $ repeat '\n'
+        tictactoe emptyBoard 'x'
+  
+
 
 tictactoe :: Board -> Char -> IO()
 tictactoe board playerChar = do
     putStrLn $ "\n" ++ (makeBoard board) ++ "\n"
     putStrLn $ "Player " ++ [playerChar] ++ ", please enter your move: "
     line <- getLine
+    -- make space for the board
     putStrLn $ take 20 $ repeat '\n'
+    -- quit based on user input
     if "exit" == line then
       return ()
     else do
+      -- get move
       let move = makeMove line
+      -- if the move is valid
       if snd move then do
+        -- insert playerChar and update the board
         let newBoardTuple = updatedBoard board (fst move) playerChar
         if snd newBoardTuple then do
+          -- updated board
           let newBoard = fst newBoardTuple
+          -- check for a win
           if (checkForWin newBoard (fst move)) then do
             putStrLn $ makeBoard newBoard
             putStrLn $ "Player " ++ [playerChar] ++ " is the winner!"
             restart
+          -- check for a tie
           else if fullBoard newBoard then do
             putStrLn $ makeBoard newBoard
             putStrLn $ "It's a tie!"
             restart
           else
+            -- if neither win nor tie, continue game
             tictactoe newBoard (turn playerChar) 
+        -- if the move was invalid because it does not exist or is taken
         else do
           putStrLn "Invalid move!"
           putStrLn "Please try again."
           tictactoe board playerChar 
+      -- if the user input is invalid
       else do
         putStrLn "Invalid move.\nPlease try again."
         tictactoe board playerChar 
