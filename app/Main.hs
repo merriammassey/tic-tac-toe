@@ -26,8 +26,6 @@ putStrLn $ take 10 $ repeat '\n'
         putStrLn $ take 20 $ repeat '\n'
         tictactoe emptyBoard 'x'
   
-
-
 tictactoe :: Board -> Char -> IO()
 tictactoe board playerChar = do
     putStrLn $ "\n" ++ (makeBoard board) ++ "\n"
