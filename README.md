@@ -2,6 +2,8 @@
 
 ## Description
 
+This is a classic game of Tic-Tac-Toe written in Haskell and in which users play using the Command Line Interface.
+
 Haskell is a purely functional programming language in which programs are written in declarative code as a single expression that is executed when the expression is evaluated. With lazy expression, the expression is not evaluated until it is used, which can result in perfomance gains.
 
 To learn more about Haskell, watch [this short video](https://www.youtube.com/watch?v=Qa8IfEeBJqk).
