@@ -33,7 +33,17 @@ makeBoard board =
     numbers s = [(show n) ++ "  " ++ x | n <- [0..(length s)-1], x <- [s!!n]]
 
 
--- check if position is open 
+-- turns user input into a Move, checking to see if it's a valid move
+makeMove :: String -> (Move, Bool)
+makeMove str
+    -- if the user enters more than 2 characters, it's an invalid move
+    | length str /= 2                             = invalidMove -- Other than 2 chars
+    | (elem l ['A'..'Z']) && (elem n ['0'..'9'])  = ( ((ord l)-65, (ord n)-48), True )
+    | otherwise                                   = invalidMove -- Invalid Move
+  where
+    l = str!!0 -- Char letter
+    n = str!!1 -- Char number
+    invalidMove = ((0,0), False)
 
 -- place item, return new board
 -- helper function that inserts an item into an array
@@ -51,14 +61,28 @@ getItem x y mat = (mat!!y)!!x
 strFromArr :: String -> [String]
 strFromArr = map (\x -> [x])
 
--- check if player won
-    -- if not, continue game
--- check for tie
-    -- if not, continue game
+-- check for a winner 
+checkForWin :: Board -> Move -> Bool
+checkForWin b m = vert || horiz || diagUpperLeft || diagUpperRight
+  where
+    dUL             = diagonalFromLeft b -- The upper left daigonal array
+    dUR             = diagonalFromRight b -- The upper right diaganal array
+    -- check the row, column, and diagonals from last move to see if they all contain same player
+    vert            = checkForSame $ b !! (snd m)
+    horiz           = checkForSame $ map (!! (fst m)) b
+    diagUpperLeft   = (not $ all (== ' ') dUL) && (checkForSame dUL)
+    diagUpperRight  = (not $ all (== ' ') dUR) && (checkForSame dUR)
+
+-- check to see if board is full
+fullBoard :: Board -> Bool
+fullBoard = not . foldr1 (||) . map (any(==' '))
+
 
 -- print board with newly placed piece
 
 -- alternate turns
+turn :: Char -> Char
+turn current = if current == 'x' then 'o' else 'x'
 
 -- prevent replays
 
